@@ -1,0 +1,9 @@
+Package: parallelBugs
+Title: Run Multiple OpenBUGS Chains On A Cluster
+Version: 0.0.0.9000
+Authors@R: person("Tom", "Werner", email = "tom-werner@uiowa.com", role = c("aut", "cre"))
+Description: Allows for running multiple openbugs chains in parallel on a single machine or a cluster, through the R2OpenBUGS and coda packages.
+Depends: R (>= 3.2.3)
+License: MIT
+Encoding: UTF-8
+LazyData: true

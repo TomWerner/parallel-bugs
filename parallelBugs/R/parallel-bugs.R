@@ -7,13 +7,12 @@ build.cluster.list = function(host.list, cpu.counts) {
   if (!is.vector(host.list) && is.character(host.list)) {
     host.list = c(host.list)
   }
-  if (is.vector(host.list) && (is.numeric(cpu.counts) && !is.vector(cpu.counts))) {
+  if (is.vector(host.list) && (is.numeric(cpu.counts) && length(cpu.counts) == 1)) {
     cpu.counts = rep(cpu.counts, length(host.list))
   }
   if (is.vector(host.list) && is.vector(cpu.counts)) {
     if (length(host.list) != length(cpu.counts)) {
       stop("Mismatch between cpu list and host list lengths")
-      print("ERROR. Mismatch between cpu list and host list lengths.")
       return()
     }
   }
@@ -21,7 +20,6 @@ build.cluster.list = function(host.list, cpu.counts) {
   for (i in 1:length(host.list)) {
     cluster.hosts = c(cluster.hosts, rep(host.list[i], cpu.counts[i]))
   }
-  print(cluster.hosts)
   return(cluster.hosts)
 }
 
@@ -56,7 +54,7 @@ parallel.bugs = function(host.list,
                          n.iter=5000,
                          n.burnin=1000,
                          bugs.debug=FALSE
-                         ) {
+) {
   if (length(init.list) != n.chains) {
     stop("Number of chains must match length of init list")
   }
