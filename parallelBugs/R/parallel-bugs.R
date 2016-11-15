@@ -39,7 +39,7 @@ bugs.worker <- function(chain, data, model.str, inits, params, n.iter, n.burnin,
        n.iter=n.iter, n.chains=1, n.burnin=n.burnin, n.thin=1,
        model.file="model.txt", debug=bugs.debug, codaPkg=TRUE,
        OpenBUGS.pgm=OpenBUGS.exe,
-       working.directory=folder)
+       working.directory=folder,bugs.seed=as.integer(runif(1, 1, 14)))
   read.bugs(c(paste(folder, "/CODAchain1.txt", sep="")))[[1]]
 }
 
