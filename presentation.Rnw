@@ -1,0 +1,162 @@
+\documentclass{beamer}
+
+
+\title{Distributing OpenBUGs chains in parallel}
+\author{Tom Werner \\ Chris Chekal}
+\institute{Department of Computer Science\\The University of Iowa\\Iowa City, IA}
+
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\begin{frame}
+ \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{What is OpenBUGs?}
+
+  \begin{itemize}
+   \item Software for \textbf{B}ayesian inference \textbf{U}sing  \textbf{G}ibbs \textbf{S}ampling
+   \item Uses Monte Carlo Markov Chains (MCMC) to model posterior distributions
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Why use OpenBUGs?}
+  
+  \begin{itemize}
+    \item Free and open source software
+    \item Integrates with R through R2OpenBugs/Coda packages
+    \item Used in Bayesian analysis class at Iowa
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{What is being parallelized?}
+  
+  \begin{itemize}
+    \item Using MCMC requires drawing many samples from a converged chain
+    \item Determining convergence is easier with multiple chains
+    \item If chains converge to different spots, something is wrong
+    \item Each chain is independent of the others, allowing for naive parallelization
+    \item Just need to make sure they're seeded independently
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Easy cluster/CPU parallization in R}
+  
+  \begin{itemize}
+    \item We used the Snow and Snowfall packages
+    \item They let you easily set up a cluster to run R code on
+    \item sfLapply works like regular apply, but distributes it over the cluster
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Snow/Snowfall Example}
+  
+  \begin{itemize}
+  \item
+    data = matrix(rnorm(1000 * 1000), ncol=100)
+    
+    library(snow)\\
+    library(snowfall)\\
+    sfInit(parallel=TRUE, cpus=4)\\
+    print(system.time(sfLapply(data, mean)))\\
+    sfStop()\\
+    sfInit(parallel=TRUE, cpus=1)\\
+    print(system.time(sfLapply(data, mean)))\\
+    sfStop()
+    \item Parallel: 2.61 seconds
+    \item Sequential: 6.26 seconds
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Parallel Bugs workflow}
+  
+  \begin{enumerate}
+    \item Define openbugs model as a string, data as an R list, and inits as a list
+    \item Call parallelBugs with these arguments, and the IP addresses of cluster machines
+    \item Use Coda or other R packages for analyzing MCMC output
+  \end{enumerate}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Parallel Bugs workflow}
+  
+  \begin{enumerate}
+    \item Define openbugs model as a string, data as an R list, and inits as a list
+  \end{enumerate}
+
+  \begin{verbatim}
+model.str = "model
+{
+  tau ~ dgamma(0.0001, 0.0001)
+  mu ~ dflat()
+  sigma <- 1 / sqrt(tau)
+
+  for(i in 1:N)
+  {
+    x.data[i]~dnorm(mu, tau)
+  }
+}"
+  \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Parallel Bugs workflow}
+  
+  \begin{enumerate}
+    \item Define openbugs model as a string, data as an R list, and inits as a list
+  \end{enumerate}
+
+  \begin{verbatim}
+# Simulated normal dataset
+bugs.data = list(x.data=rnorm(1000, 12, 5), N=1000)
+
+# Initial values of parameters. Note that you can use
+# R random number functions here
+init.list = list(
+  chain1=list(mu=runif(1, -50, 50), tau=1),
+  chain2=list(mu=-50, tau=10),
+  chain3=list(mu=50, tau=.1)
+)
+
+# Parameters to collect statistics on
+params <- c("mu", "sigma")
+  \end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Does it help?}
+  
+  \begin{enumerate}
+    \item Parallel time for 100,000 iterations, 3 chains: 60 seconds
+    \item Sequential time: 115 seconds
+  \end{enumerate}
+
+  \begin{verbatim}
+system.time(bugs(data=bugs.data, inits=init.list, 
+                 parameters.to.save=params, n.iter=100000, 
+                 n.chains=3, n.burnin=1000, n.thin=1,
+                 model.file="model.txt", debug=FALSE, 
+                 codaPkg=TRUE, OpenBUGS.pgm=OpenBUGS.exe,
+                 working.directory=folder,
+                 bugs.seed=as.integer(runif(1, 1, 14))))
+   user  system elapsed 
+   0.17    0.03   60.69
+system.time(parallel.bugs('localhost', 3, model.str, 
+                          bugs.data, 3, init.list, params, 
+                          OpenBUGS.exe, n.iter=100000))
+   user  system elapsed 
+   0.42    0.00  115.22 
+  \end{verbatim}
+\end{frame}
+
+
+\end{document}

@@ -2,6 +2,13 @@
 .Rhistory
 .Rapp.history
 
+.log
+.nav
+.snm
+.gz
+.toc
+.vrb
+
 # Session Data files
 .RData
 
