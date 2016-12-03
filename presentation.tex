@@ -1,5 +1,5 @@
 \documentclass{beamer}
-
+\usepackage{natbib}
 
 \title{Distributing OpenBUGs chains in parallel}
 \author{Tom Werner \\ Chris Chekal}
@@ -159,5 +159,12 @@ system.time(parallel.bugs('localhost', 3, model.str,
   \end{verbatim}
 \end{frame}
 
-
+\begin{frame}
+  \frametitle{References}
+    \begin{itemize}
+      \item Luke Tierney, A. J. Rossini, Na Li and H. Sevcikova (2016). snow: Simple Network of Workstations. R package version 0.4-2. https://CRAN.R-project.org/package=snow
+      \item Jochen Knaus (2015). snowfall: Easier cluster computing (based on snow).. R package version 1.84-6.1. https://CRAN.R-project.org/package=snowfall
+      \item Martyn Plummer, Nicky Best, Kate Cowles and Karen Vines (2006). CODA: Convergence Diagnosis and Output Analysis for MCMC, R News, vol 6, 7-11
+    \end{itemize}
+\end{frame}
 \end{document}
