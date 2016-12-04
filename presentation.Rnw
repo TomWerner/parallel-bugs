@@ -159,6 +159,60 @@ system.time(parallel.bugs('localhost', 3, model.str,
 \end{frame}
 
 \begin{frame}
+\frametitle{Why Create an R Package?}
+\begin{itemize}
+    \item Functions that you write and use often can be easily loaded and used on your local machine 
+    \item Can be uploaded to CRAN, allowing other R users to utilize the functions you wrote 
+    \item Provides documentation, making your code easily understandable for other users
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{How to Create an R Package?}
+Packages that you will first need to download:
+\begin{itemize}
+    \item devtools \\
+        \texttt{install.packages("devtools")}
+    \item roxygen2 \\
+        \texttt{devtools::install\_github(klutometis/roxygen)}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Creating Your Package Directory}
+\begin{itemize}
+    \item Navigate to your desired parent directory
+    \item Create the R package \\
+        \texttt{create("packagename")}
+    \item The package you created will include:
+    \begin{itemize}
+        \item Description document
+        \item man folder
+        \item R folder
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Adding Functions to R Package}
+\begin{itemize}
+    \item Write your R function(s) and save them in to a .R file
+    \item If you have multiple functions, you can either save them in multiple .R files or write them sequentially in one .R file
+    \item Copy your .R file(s) to the R folder
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Install Your New R Package!}
+\begin{itemize}
+    \item Make sure to navigate back to the parent directory
+    \item Install package \\ 
+        \texttt{install("packagename")}
+    \item Your R package is now ready to use!
+\end{itemize}
+\end{frame}
+
+\begin{frame}
   \frametitle{References}
     \begin{itemize}
       \item Luke Tierney, A. J. Rossini, Na Li and H. Sevcikova (2016). snow: Simple Network of Workstations. R package version 0.4-2. https://CRAN.R-project.org/package=snow
